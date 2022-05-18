@@ -36,11 +36,19 @@ class CourseController extends Controller
             $course->name = $request->name;
             $course->instructor_id = $request->instructor_id;
             $course->price = $request->price;
-
-            if ($course -> save())
-            {
-                return response()->json(['status' => 'success', 'message' => 'Course updated successfully']);
+            $user_id = $course->instructor_id;
+            $user_detail = User_Detail::where('role_id', '=' , $user_id);
+            $user_type = $user_detail->role_id;
+            if($user_type == 1 || $user_type == 2){
+                if ($course -> save())
+                {
+                    return response()->json(['status' => 'success', 'message' => 'Course updated successfully']);
+                }
             }
+                        
+                else{
+                    return response()->json(['status' => 'error', 'message' => 'Course can\'t be updated']);
+                }
         } catch(\Exception $e)
         {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
@@ -51,11 +59,21 @@ class CourseController extends Controller
     {
         try {
             $course = Course::findOrFail($id);
-
-            if ($course -> delete())
-            {
-                return response()->json(['status' => 'success', 'message' => 'Course deleted successfully']);
+            $user_id = $course->instructor_id;
+            $user_detail = User_Detail::where('role_id', '=' , $user_id);
+            $user_type = $user_detail->role_id;
+            if($user_type == 1 || $user_type == 2){
+                if ($course -> delete())
+                {
+                    return response()->json(['status' => 'success', 'message' => 'Course deleted successfully']);
+                }
             }
+                        
+                else{
+                    return response()->json(['status' => 'error', 'message' => 'Course can\'t be deleted']);
+                }
+            
+
         } catch(\Exception $e)
         {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);

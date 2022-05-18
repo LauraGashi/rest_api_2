@@ -36,11 +36,28 @@ class UserController extends Controller
             $user->name = $request->name;
             $user->email = $request->email;
             $user->password = $request->password;
-
-            if ($user -> save())
-            {
-                return response()->json(['status' => 'success', 'message' => 'User updated successfully']);
+            $user_id = $user->user_id;
+            $user_detail = User_Detail::where('user_id', '=' , $user_id);
+            $user_type = $user_detail->user_type;
+            if($user_type == 1){
+                if ($user -> save())
+                {
+                    return response()->json(['status' => 'success', 'message' => 'User updated successfully']);
+                }
             }
+            else{
+                $user = User :: findOrFail($request->user_id);
+                $userId = $user -> id;
+                if($user_id == $userId){
+                    if ($user -> save())
+                    {
+                        return response()->json(['status' => 'success', 'message' => 'User updated successfully']);
+                    }                }
+                else{
+                    return response()->json(['status' => 'error', 'message' => 'User can\'t be updated']);
+                }
+            }
+
         } catch(\Exception $e)
         {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
@@ -51,11 +68,28 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-
-            if ($user -> delete())
-            {
-                return response()->json(['status' => 'success', 'message' => 'User deleted successfully']);
+            $user_id = $user->user_id;
+            $user_detail = User_Detail::where('user_id', '=' , $user_id);
+            $user_type = $user_detail->user_type;
+            if($user_type == 1){
+                if ($user -> delete())
+                {
+                    return response()->json(['status' => 'success', 'message' => 'User deleted successfully']);
+                }
             }
+            else{
+                $user = User :: findOrFail($request->user_id);
+                $userId = $user -> id;
+                if($user_id == $userId){
+                    if ($user -> delete())
+                    {
+                        return response()->json(['status' => 'success', 'message' => 'User deleted successfully']);
+                    }                }
+                else{
+                    return response()->json(['status' => 'error', 'message' => 'User can\'t be deleted']);
+                }
+            }
+            
         } catch(\Exception $e)
         {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
